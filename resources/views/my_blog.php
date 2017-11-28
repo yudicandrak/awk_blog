@@ -587,7 +587,7 @@
         contentType: false,
         processData: false,
         success: function (returndata) {
-          alert(returndata);
+          // alert(returndata);
         }
       });
     });
@@ -714,16 +714,13 @@
       type: "POST",
       success: function(data)
       {
-        var obj = JSON.parse(data);
-        // console.log(obj[0]['url']); return;      
-        // for(var k in obj) {
-        //   document.getElementById('upd_title').value = obj[0]['post_title'];
-        //   CKEDITOR.instances['editor2'].setData(obj[0]['post_content']);
-        //   document.getElementById('btn-sub-edit').setAttribute("onclick","update_blog("+ obj[k]['id_post'] +","+ obj[k]['id_user'] +")");
-        // }
-          // document.getElementById('upd_url').setAttribute('value', obj[0]['url'] );
-          $("#upd_url").tagsinput('add',{ id: 1, text: 'some' });
-          $('#upd_url').tagsinput('refresh');
+        var obj = JSON.parse(data);   
+        $('#upd_url').importTags(obj[0]['url']);
+        for(var k in obj) {
+          document.getElementById('upd_title').value = obj[0]['post_title'];
+          CKEDITOR.instances['editor2'].setData(obj[0]['post_content']);
+          document.getElementById('btn-sub-edit').setAttribute("onclick","update_blog("+ obj[k]['id_post'] +","+ obj[k]['id_user'] +")");
+        }
 
         $.ajax({
           url: "get_tags",

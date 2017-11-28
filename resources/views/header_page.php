@@ -18,7 +18,7 @@
     <!-- iCheck -->
     <link href="{{ base_url }}templates/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
     <!-- bootstrap-wysiwyg -->
-    <link href="{{ base_url }}templates/vendors/google-code-prettify/bin/prettify.min.css" rel="stylesheet">
+    <!-- <link href="{{ base_url }}templates/vendors/google-code-prettify/bin/prettify.min.css" rel="stylesheet"> -->
     <!-- Select2 -->
     <link href="{{ base_url }}templates/vendors/select2/dist/css/select2.min.css" rel="stylesheet">
     <!-- Switchery -->

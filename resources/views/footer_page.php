@@ -24,9 +24,9 @@
     <script src="{{ base_url }}templates/vendors/moment/min/moment.min.js"></script>
     <script src="{{ base_url }}templates/vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
     <!-- bootstrap-wysiwyg -->
-    <script src="{{ base_url }}templates/vendors/bootstrap-wysiwyg/js/bootstrap-wysiwyg.min.js"></script>
+    <!-- <script src="{{ base_url }}templates/vendors/bootstrap-wysiwyg/js/bootstrap-wysiwyg.min.js"></script>
     <script src="{{ base_url }}templates/vendors/jquery.hotkeys/jquery.hotkeys.js"></script>
-    <script src="{{ base_url }}templates/vendors/google-code-prettify/src/prettify.js"></script>
+    <script src="{{ base_url }}templates/vendors/google-code-prettify/src/prettify.js"></script> -->
     <!-- jQuery Tags Input -->
     <script src="{{ base_url }}templates/vendors/jquery.tagsinput/src/jquery.tagsinput.js"></script>
     <!-- Switchery -->

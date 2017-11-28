@@ -37,7 +37,7 @@ class dashboardControl extends BaseController
 		try {
 			$s = "
 				select * from (
-				  select wu.username, wp.id_post as id_post, wp.post_title, wp.post_content, count(wc.id_comment) as jml_comment
+				  select wu.full_name, wp.id_post as id_post, wp.post_title, wp.post_date, if(wp.media <> '', concat('image_post/',wp.media), 'default_news.png') as media, count(wc.id_comment) as jml_comment
 				    from wp_post wp join wp_comment wc on wp.id_post = wc.id_post
 				    join wp_user wu on wp.id_user = wu.id_user
 				  group by wp.id_post
@@ -267,5 +267,51 @@ class dashboardControl extends BaseController
 		}else{
 			$this->view->render($response, 'login/login.php');
 		}
+	}
+	
+	public function t_view_post($request, $response){
+		try {
+			$s = "	select wp.id_post, wp.post_title, wp.post_content, wp.tag, wp.url, wp.media, wp.post_date, wp.user_like, wp.rating_post, wu.id_user, wu.full_name, (select count(id_comment) from wp_comment where id_post = ".$_POST['eid_post']." and status = 0) as c_comment
+					from wp_post wp join wp_user wu on wp.id_user = wu.id_user
+					where id_post = ".$_POST['eid_post'];
+			$s = $this->db->prepare($s);
+			$s->execute();
+			$data = $s->fetchAll(\PDO::FETCH_ASSOC);
+			foreach($data as $k=>$v){
+				$v_like = $u_like = $like = '';
+				$c_like = 0;
+				$data[$k]['b_like'] = 'fa-thumbs-o-up';
+				$e_ul = explode('_',$data[$k]['user_like']);
+				if($data[$k]['user_like'] != ''){
+					foreach($e_ul as $kk=>$vv){
+						if($vv == $_COOKIE['id_user']){
+							$v_like = 'You';
+							$data[$k]['b_like'] = 'fa-thumbs-up';
+						}else{
+							if($vv != ''){
+								$u_like = $u_like.$vv."_";
+								$c_like++;
+							}
+						}
+					}
+				}
+				if($c_like == 0){
+					$like = $v_like;
+				}else{
+					if($v_like == ''){
+						$like = $c_like;
+					}else{
+						$like = $v_like.' and '.$c_like.' Other';
+						$data[$k]['b_like'] = 'fa-thumbs-up';
+					}
+				}
+				$data[$k]['jumlah_like'] = $like;
+				$data[$k]['user_unlike'] = $u_like;
+			}
+            return json_encode($data);
+			
+        } catch (PDOException $e) {
+            return $this->jsonFail("Can not load data: attachment ", array('error'=>$e->getMessage()));
+        }
 	}
 }

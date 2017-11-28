@@ -236,7 +236,7 @@
   word-wrap: break-word;
   white-space: normal;
   text-align: left;
-  max-width: 50%;
+  width: 100%;
   left: 0;
 }
 .csslider1 > .cs_description > label > span {
@@ -765,7 +765,7 @@ _:-ms-input-placeholder, :root .csslider1 > .cs_play_pause > label span:after {
   font-size: 20px;
   line-height: normal;
   bottom: 50px;
-  top: auto;
+  top: 10px;
   left: 10px;
 }
 
@@ -773,7 +773,6 @@ _:-ms-input-placeholder, :root .csslider1 > .cs_play_pause > label span:after {
   color: #3A4A5A;
   position: relative;
   padding: 13px;
-  border-radius: 10px;
 
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -812,8 +811,8 @@ _:-ms-input-placeholder, :root .csslider1 > .cs_play_pause > label span:after {
   transform: translateY(0);
 }
 .csslider1 > .cs_description > label > .cs_title {
-  background-color: #CBECFD;
-  margin: -5px 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 98%;
   opacity: 0;
   visibility: hidden;
   z-index: 2;
@@ -831,7 +830,8 @@ _:-ms-input-placeholder, :root .csslider1 > .cs_play_pause > label span:after {
     950ms visibility 600ms cubic-bezier(0.680, -0.550, 0.265, 1.550);
 }
 .csslider1 > .cs_description > label > .cs_descr {
-  background-color: #e5f6fe;
+  background-color: rgba(0, 0, 0, 0.7);
+  width: 98%;
   text-align: left;
   font-size: 0.8em;
   margin: -5px 20px;
@@ -1141,4 +1141,12 @@ only screen and (                max-resolution: 2dppx)  and (max-width: 480px) 
   .csslider1 > .cs_bullets {
     display: none;
   }
+}
+
+.col_white{
+	color:#fff;
+}
+
+.detpost{
+	margin-top:20px;
 }

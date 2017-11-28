@@ -26,14 +26,14 @@
     <ul>
       <li class="cs_skeleton" style="height:300px;"><img src="{{ base_url }}bootstrap/cssslider_files/csss_images1/2017yamahayzfr6thunderhilljensenbeeler06.jpg" style="width: 100%;"></li>
 
-      <li class='num0 img slide'> <img src='{{ base_url }}bootstrap/cssslider_files/csss_images1/img1.jpg' alt='img1' title='img1' /></li>
-      <li class='num1 img slide'> <img src='{{ base_url }}bootstrap/cssslider_files/csss_images1/img2.jpg' alt='img2' title='img2' /></li>
-      <li class='num2 img slide'> <img src='{{ base_url }}bootstrap/cssslider_files/csss_images1/img3.jpg' alt='img3' title='img3' /></li>
+      <li class='num0 img slide'> <img class="img_slide0" src='{{ base_url }}asset/default_news.png' alt='img1' title='img1' /></li>
+      <li class='num1 img slide'> <img class="img_slide1" src='{{ base_url }}bootstrap/cssslider_files/csss_images1/img2.jpg' alt='img2' title='img2' /></li>
+      <li class='num2 img slide'> <img class="img_slide2" src='{{ base_url }}bootstrap/cssslider_files/csss_images1/img3.jpg' alt='img3' title='img3' /></li>
     </ul><div class="cs_engine"><a href="http://cssslider.com">css slider</a> by cssSlider.com v2.1</div>
     <div class='cs_description'>
-      <label class='num0 b_func'><span class="cs_title"><span id="post1" class="cs_wrapper"> </span></span></label>
-      <label class='num1 b_func'><span class="cs_title"><span id="post2" class="cs_wrapper"> </span></span></label>
-      <label class='num2 b_func'><span class="cs_title"><span id="post3" class="cs_wrapper"> </span></span></label>
+      <label class='num0 b_func'><span class="cs_title"><span id="post0" class="cs_wrapper col_white"> </span><div id="detailpost0" class="detpost"></div></span></label>
+      <label class='num1 b_func'><span class="cs_title"><span id="post1" class="cs_wrapper col_white"> </span><div id="detailpost1" class="detpost"></div></span></label>
+      <label class='num2 b_func'><span class="cs_title"><span id="post2" class="cs_wrapper col_white"> </span><div id="detailpost2" class="detpost"></div></span></label>
     </div>
     <div class='cs_play_pause'>
       <label class='cs_play b_func' for='cs_play1'><span><i></i><b></b></span></label>
@@ -53,11 +53,11 @@
     </div>
     <div class='cs_bullets'>
       <label class='num0' for='cs_slide1_0'> <span class='cs_point'></span>
-        <span class='cs_thumb'><img src='{{ base_url }}bootstrap/cssslider_files/csss_tooltips1/img1.jpg' alt='img1' title='img1' style="width: 50px; height: 30px" /></span></label>
+        <span class='cs_thumb'><img class="img_slide0" src='{{ base_url }}bootstrap/cssslider_files/csss_tooltips1/img1.jpg' alt='img1' title='img1' style="width: 50px; height: 30px" /></span></label>
       <label class='num1' for='cs_slide1_1'> <span class='cs_point'></span>
-        <span class='cs_thumb'><img src='{{ base_url }}bootstrap/cssslider_files/csss_tooltips1/img2.jpg' alt='img2' title='img2' style="width: 50px; height: 30px"/></span></label>
+        <span class='cs_thumb'><img class="img_slide1" src='{{ base_url }}bootstrap/cssslider_files/csss_tooltips1/img2.jpg' alt='img2' title='img2' style="width: 50px; height: 30px"/></span></label>
       <label class='num2' for='cs_slide1_2'> <span class='cs_point'></span>
-        <span class='cs_thumb'><img src='{{ base_url }}bootstrap/cssslider_files/csss_tooltips1/img3.jpg' alt='img3' title='img3' style="width: 50px; height: 30px"/></span></label>
+        <span class='cs_thumb'><img class="img_slide2" src='{{ base_url }}bootstrap/cssslider_files/csss_tooltips1/img3.jpg' alt='img3' title='img3' style="width: 50px; height: 30px"/></span></label>
     </div>
     </div>
     <!-- End cssSlider.com -->
@@ -66,19 +66,26 @@
 	$(function(){
 		$.post("cont_slide", function(data) {
 			var obj = JSON.parse(data);
-			
-			document.getElementById('post1').innerHTML = 
-				"author : " + obj[0]['username'] + "<br/>" +
-				"title : " + obj[0]['post_title'];
-			document.getElementById('post2').innerHTML = 
-				"author : " + obj[1]['username'] + "<br/>" +
-				"title : " + obj[1]['post_title'];
-			document.getElementById('post3').innerHTML = 
-				"author : " + obj[2]['username'] + "<br/>" +
-				"title : " + obj[2]['post_title'];
+			for (var k in obj){
+				$("#post"+k).html("<a onclick='window.location.replace(\"view_post?eid_post="+obj[k]['id_post']+"\")' class='judul_post'>"+obj[k]['post_title']+"</a>");
+				$("#detailpost"+k).html(obj[k]['full_name']+" - "+formatDate2(new Date(obj[k]['post_date'])));
+				$('.img_slide'+k).attr('src', '{{ base_url }}asset/'+obj[k]['media']);
+			}
+			// document.getElementById('post2').innerHTML = 
+				// "author : " + obj[1]['username'] + "<br/>" +
+				// "title : " + obj[1]['post_title'];
+				// $('.img_slide1').attr('src', '{{ base_url }}asset/'+obj[1]['media']);
+				
+			// document.getElementById('post3').innerHTML = 
+				// "author : " + obj[2]['username'] + "<br/>" +
+				// "title : " + obj[2]['post_title'];
+				// $('.img_slide2').attr('src', '{{ base_url }}asset/'+obj[2]['media']);
 
 		});
 	});
+	function formatDate2(date) {
+		return date.getDate()+'/'+date.getMonth()+'/'+date.getFullYear()+' '+date.getHours()+':'+date.getMinutes();
+	}
 </script>
 
 </div>
@@ -93,7 +100,7 @@
 			</div>
 			<div class="col-md-3 col-sm-3 col-xs-12">
 				<div class="x_title">
-					<h2>Top Taxonomi Performance</h2>
+					<h4>Top Taxonomi Performance</h4>
 					<div class="clearfix"></div>
 				</div>
 				<div id="tag_div" class="col-md-12 col-sm-12 col-xs-6">
@@ -464,146 +471,6 @@
 
 <!-- Start CSS Slider -->
 <style>
-	body {
-	  margin: 0;
-	  //background: #F5F6F8;
-	}
 
-	*, *:after, *:before {
-	  -webkit-box-sizing: border-box;
-	  -moz-box-sizing: border-box;
-	  box-sizing: border-box;
-	}
-	#sliderWrapp {
-	  text-align: center;
-	  background: #fff;
-	  padding: 30px 10px;
-	  border-bottom: 1px solid #DDE0E7;
-	}
-	#sliderWrapp > div {
-	  margin: 0 auto;
-	  width:100%;
-	}
-	.instuction {
-	  font-family: sans-serif, Arial;
-	  display: block;
-	  margin: 0 auto;
-	  max-width: 840px;
-	  width: 100%;
-	  color: #494F54;
-	  padding: 0 10px;
-	  text-align: left;
-	  -webkit-box-sizing: border-box;
-	  -moz-box-sizing: border-box;
-	  box-sizing: border-box;
-	}
-	.instuction h1 img {
-	  max-width: 170px;
-	  vertical-align: middle;
-	  margin-bottom: 10px;
-	}
-	.instuction h1 {
-	  font-weight: normal;
-	  color: #3A4A5A;
-	  text-align: center;
-	}
-	.instuction h2 {
-	  position: relative;
-	  font-weight: normal;
-	  font-size: 1.4em;
-	  margin-bottom: 20px;
-	  margin-top: 0;
-	  padding-left: 50px;
-	}
-	.instuction h2 .num {
-	  position: absolute;
-	  font-style: italic;
-	  font-size: 1.3em;
-	  left: -8px;
-	  top: -12px;
-
-	  width: 50px;
-	  height: 50px;
-	  line-height: 50px;
-	  background: #CBECFD;
-	  display: inline-block;
-	  text-align: center;
-	  border-radius: 50%;
-	}
-	.instuction .mono {
-	  color: #000;
-	  font-family: monospace;
-	  font-size: 1.3em;
-	  font-weight: normal;
-	}
-	.instuction li.mono {
-	  font-size: 1.5em;
-	}
-
-	.instuction ul {
-	  font-size: 0.9em;
-	  margin-top: 0;
-	  padding-left: 0;
-	  list-style: none;
-	}
-	.instuction .note {
-	  color: #A3A3B2;
-	  font-style: italic;
-	  padding-top: 10px;
-	}
-	.instuction p.note {
-	  text-align: center;
-	  padding-top: 0;
-	  margin-top: 4px;
-	}
-	.instuction textarea {
-	  font-size: 0.9em;
-	  min-height: 60px;
-	  padding: 10px;
-	  margin: 0;
-	  overflow: auto;
-	  max-width: 100%;
-	  width: 100%;
-	}
-	.instuction a,
-	.instuction a:visited {
-	  color: #2196F3;
-	}
-
-	.instuction .card {
-	  padding: 25px;
-	  margin-bottom: 20px;
-	  background: #fff;
-	  border: 1px solid #DDE0E7;
-	}
-	
-	.b_func{
-		max-width:none;
-	}
-
-	[contentEditable=true]:empty:not(:focus):before{
-		content:attr(data-text)
-	}
-
-	#button_send:hover{
-		opacity: 0.5; 
-	}
-	
-	.div_comment:hover{
-		background-color: #e9eced;
-		//opacity: 0.8; 
-	}
-	
-	.b_like:active{
-		transform: translateY(4px);
-	}
-	
-	.judul_post{
-		color:#000;
-	}
-	
-	.judul_post:hover{
-		cursor:pointer;
-	}
 </style>
 <!-- End CSS Slider -->
