@@ -27,6 +27,9 @@
 <!-- end modal !-->
 
 <script type="text/javascript">
+	window.onload = function () { 
+      $('body').loading('stop');
+    }
 	$.ajax({
 		url		:'t_view_post',
 		data	:{ eid_post : {{ id_post }}},
@@ -39,14 +42,20 @@
 			div.setAttribute("class", "col-md-9 col-sm-9 col-xs12");
 			div.innerHTML = 	"<div>"+
 									"<h1 class='color_black'>"+obj[0]['post_title']+"</h1>"+
-									"<div>"+obj[0]['full_name']+" - "+formatDate(new Date(dt))+"</div>"+
+									"<div><a onclick='alert(\"coming soon\")' style='cursor:pointer'>"+obj[0]['fullname']+"</a> - "+formatDate(new Date(dt))+"<span id='span_tag'></span></div>"+
 								"</div>"+
 								"<div>"+
 									"<img src='{{ base_url }}asset/image_post/"+obj[0]['media']+"' style='margin-top: 20px; margin-bottom: 20px; width:100%; box-shadow: 1px 1px 10px #888888;'>"+
 								"</div>"+
-								"<div class='color_black col-md-11 col-sm-11 col-xs12'>"+
+								"<div>"+
 									obj[0]['post_content']+
 								"</div>"+
+								
+								
+								"<div style='margin-top:30px; margin-bottom:30px; background:#f0f0f0; padding:10px;'>"+
+									"<span>Atachment : </span><span id='file_attac'></span>"+
+								"</div>"+
+								
 								
 								"<div style='width:500px'>"+
 									"<img src='{{ base_url }}asset/like.png' width='20px'>"+
@@ -76,6 +85,27 @@
 								"</div>";
 			document.getElementById('div_view_post').appendChild(div);
 			
+			if(obj[0]['taxonomi']){
+				var sk = obj[0]['taxonomi'].split(",");
+				var taxonomi = '';
+				for(i in sk){
+					taxonomi += "<span onclick='alert(\"coming soon\")' class='taxonomi_span' style='background:"+color_tag(i)+"; cursor:pointer'>"+sk[i]+"</span>";
+				}
+				$("#span_tag").html(taxonomi);
+			}
+			
+			if(obj[0]['fn_media']){
+				var sk = obj[0]['fn_media'].split("____");
+				var media = '';
+				console.log(obj[0]['id_post']);
+				for (var k in sk){
+					var skk = sk[k].split("----");
+					media = media+"<br><span class='fs1 text-info' aria-hidden='true' data-icon=''></span>"+
+								"<a href = '{{ base_url }}public/downFiles?eid_upload="+skk[1]+"' style='cursor:pointer; margin-right:5px;'><i class='fa fa-paperclip'></i> "+skk[0]+" </a>";
+				}
+				console.log(media);
+				$("#file_attac").html(media);
+			}
 			
 			var div2 = document.createElement('div');
 			div2.innerHTML = 	"<div class='col-md-3 col-sm-3 col-xs12'>"+
@@ -85,7 +115,23 @@
 			document.getElementById('div_view_post').appendChild(div2);
 		}
 	});
-
+	
+	function color_tag(id){
+		if(id == 0){
+			return "#5bc0de";
+		}else if(id == 1){
+			return "#398439";
+		}else if(id == 2){
+			return "#d9534f";
+		}else if(id == 3){
+			return "#f0ad4e";
+		}else if(id == 4){
+			return "#337ab7";
+		}else{
+			return "#4b5f71";
+		}
+	}
+	
 	function view_comment(id_post, c_comment, view){
 	new Date($.now());
 	var data;

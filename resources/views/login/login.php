@@ -10,20 +10,20 @@
     <title>All We Know | Blog</title>
 
     <!-- Bootstrap -->
-    <link href="http://10.15.3.183/dev/awk-slim3/templates/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://10.15.3.183/dev/awk-blog/templates/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
-    <link href="http://10.15.3.183/dev/awk-slim3/templates/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="http://10.15.3.183/dev/awk-blog/templates/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <!-- Animate.css -->
     <link href="https://colorlib.com/polygon/gentelella/css/animate.min.css" rel="stylesheet">
     <!-- Load jQuery -->
     <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
      <!-- PNotify -->
-    <link href="http://10.15.3.183/dev/awk-slim3/templates/vendors/pnotify/dist/pnotify.css" rel="stylesheet">
-    <link href="http://10.15.3.183/dev/awk-slim3/templates/vendors/pnotify/dist/pnotify.buttons.css" rel="stylesheet">
-    <link href="http://10.15.3.183/dev/awk-slim3/templates/vendors/pnotify/dist/pnotify.nonblock.css" rel="stylesheet">
+    <link href="http://10.15.3.183/dev/awk-blog/templates/vendors/pnotify/dist/pnotify.css" rel="stylesheet">
+    <link href="http://10.15.3.183/dev/awk-blog/templates/vendors/pnotify/dist/pnotify.buttons.css" rel="stylesheet">
+    <link href="http://10.15.3.183/dev/awk-blog/templates/vendors/pnotify/dist/pnotify.nonblock.css" rel="stylesheet">
 
     <!-- Custom Theme Style -->
-    <link href="http://10.15.3.183/dev/awk-slim3/templates/build/css/custom.min.css" rel="stylesheet">
+    <link href="http://10.15.3.183/dev/awk-blog/templates/build/css/custom.min.css" rel="stylesheet">
   </head>
 
   <body class="login">
@@ -121,19 +121,23 @@
       {
         var user = document.getElementById('username').value;
         var pass = document.getElementById('password').value;
-		//alert(user+" -> "+pass);
+		
         $.ajax({
-          url: "login",
-          data: {user : user, pass : pass},
+          url: "http://10.15.3.183:8080/login",
+          data: {username : user, password : pass, token : ''},
           type: "POST",
           success: function(data)
           {
+            // console.log(data); return;
 
-            if(data == '1') {
+            $.post("login", { token : data.token }, function(dtlogin){
+
+            // console.log(dtlogin); return;
+            if(dtlogin == '1') {
 
               window.location.replace("myblog");
 
-            } else if(data == '0') {
+            } else if(dtlogin == '0') {
 
               new PNotify({
                 title: 'Login alert',
@@ -142,7 +146,7 @@
                 styling: 'bootstrap3'
               });
 
-            } else if(data == '2') {
+            } else if(dtlogin == '2') {
 
               new PNotify({
                 title: 'Login alert',
@@ -152,6 +156,9 @@
               });
               
             }
+
+            }); 
+
           }
         });
       }
@@ -161,6 +168,6 @@
 </html>
 
     <!-- PNotify -->
-    <script src="http://10.15.3.183/dev/awk-slim3/templates/vendors/pnotify/dist/pnotify.js"></script>
-    <script src="http://10.15.3.183/dev/awk-slim3/templates/vendors/pnotify/dist/pnotify.buttons.js"></script>
-    <script src="http://10.15.3.183/dev/awk-slim3/templates/vendors/pnotify/dist/pnotify.nonblock.js"></script>
+    <script src="http://10.15.3.183/dev/awk-blog/templates/vendors/pnotify/dist/pnotify.js"></script>
+    <script src="http://10.15.3.183/dev/awk-blog/templates/vendors/pnotify/dist/pnotify.buttons.js"></script>
+    <script src="http://10.15.3.183/dev/awk-blog/templates/vendors/pnotify/dist/pnotify.nonblock.js"></script>

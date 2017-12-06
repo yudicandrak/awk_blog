@@ -326,9 +326,9 @@ html , body{
 }
 .nav_menu {
     float: left;
-    background: #EDEDED;
+    background: #017ebe;
     border-bottom: 1px solid #D9DEE4;
-    margin-bottom: 10px;
+    margin-bottom: 0px;
     width: 100%;
     position: relative
 }
@@ -355,7 +355,7 @@ body .container.body .right_col {
 }
 .nav-md .container.body .right_col {
     padding: 10px 20px 0;
-    margin-left: 230px
+    margin-left: 0px
 }
 .nav_title {
     width: 230px;
@@ -488,7 +488,7 @@ body .container.body .right_col {
 .top_nav .nav .open>a,
 .top_nav .nav .open>a:focus,
 .top_nav .nav .open>a:hover {
-    background: #D9DEE4
+    background: #017ebe;
 }
 body {
     color: #73879C;
@@ -498,9 +498,10 @@ body {
     font-weight: 400;
     line-height: 1.471
 }
+
 .main_container .top_nav {
     display: block;
-    margin-left: 230px
+    margin-left: 0px
 }
 .no-padding {
     padding: 0 !important
@@ -684,7 +685,7 @@ a:focus {
 }
 .top_nav .navbar-right {
     margin: 0;
-    width: 70%;
+    width: auto;
     float: right
 }
 .top_nav .navbar-right li {
@@ -830,7 +831,7 @@ a:focus {
     text-decoration: none
 }
 .nav.navbar-nav>li>a {
-    color: #515356 !important
+    color: #fff !important
 }
 .nav.top_menu>li>a {
     position: relative;
@@ -867,8 +868,8 @@ a:focus {
 .toggle {
     float: left;
     margin: 0;
-    padding-top: 16px;
-    width: 70px
+    padding-top: 0px;
+    width: 80%
 }
 .toggle a {
     padding: 15px 15px 0;
@@ -910,9 +911,10 @@ a:focus {
     padding: 4px 6px
 }
 footer {
-    background: #fff;
+    background: #017ebe;
     padding: 15px 20px;
-    display: block
+    display: block;
+	color: #fff;
 }
 .nav-sm footer {
     margin-left: 70px
@@ -1525,13 +1527,13 @@ ul.msg_list li a .message {
     border-top-right-radius: 0
 }
 .dropdown-menu>li>a {
-    color: #5A738E
+    color: #fff
 }
 .navbar-nav .open .dropdown-menu {
     position: absolute;
-    background: #fff;
+    background: #017ebe;
     margin-top: 0;
-    border: 1px solid #D9DEE4;
+    border: 1px solid #004d74;
     -webkit-box-shadow: none;
     right: 0;
     left: auto;
@@ -1701,7 +1703,7 @@ span.right {
 }
 @media (min-width: 992px) {
     footer {
-        margin-left: 230px
+        margin-left: 0px
     }
 }
 @media (min-width: 992px) {
@@ -4461,4 +4463,141 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+/*button page*/
+.b_page{
+	border:1px solid #ccc;
+	padding: 5px;
+	border-radius: 5px;
+}
+
+.taxonomi_span{
+	padding:3px;
+	margin-left:3px;
+	border-radius:5px;
+	color:#fff;
+	padding-left:8px;
+	padding-right:8px;
+}
+
+.taxonomi_span:hover{
+	opacity:0.5;
+}
+
+.img_hover:hover{
+	cursor:pointer;
+}
+
+
+.nav_menu_top{
+	margin: auto;
+	text-align: center;
+	width: 100%;
+	font-family: arial;
+}
+
+.nav_menu_top ul ul {
+	display: none;
+}
+
+.nav_menu_top ul li:hover > ul{
+	display: block;
+	width: 150px;
+}
+
+.nav_menu_top ul{
+	background:#017ebe;
+	padding: 0 20px;
+	list-style: none;
+	position: relative;
+	display: inline-table;
+	width: 100%;
+	z-index: 100;
+}
+
+.nav_menu_top ul:after {
+content: ""; 
+clear:both; 
+display: block;
+}
+
+.nav_menu_top ul li{
+	float: left;
+}
+
+.nav_menu_top ul li:hover{
+	background:#01679b;
+}
+
+.nav_menu_top ul li:hover .menu_top_a{
+	color:#000;
+}
+
+.nav_menu_top ul li a{
+	display: block;
+	padding: 5px 10px 5px 10px;
+	color: #fff;
+	text-decoration: none;
+}
+
+.nav_menu_top ul ul{
+	background: #0991d7;
+	border-radius: 0px;
+	padding: 0;
+	position: absolute;
+	top:100%;
+}
+
+.nav_menu_top ul ul li{
+	float:none;
+	border-top: 1px soild #0991d7;
+	border-bottom: 1px solid #0991d7;
+	position: relative;
+}
+
+.nav_menu_top ul ul li:hover{
+	background-color: #01679b;
+}
+
+.sub_menu_top{
+	color:#fff;
+}
+
+.nav_menu_top ul ul li:hover .sub_menu_top{
+	color: #000;
+}
+
+.nav_menu_top ul ul ul{
+	position: absolute;
+	left: 100%;
+	top: 0;
+}
+
+.input_cari{
+	background-color: rgba(0, 0, 0, 0.1);
+    border: 0px;
+    color: #fff;
+    width: 200px;
+    height: 40px;
+    border-radius: 5px 0px 0px 5px;
+    padding: 10px;
+}
+
+.input_cari::placeholder{
+	color:#fff;
+	opacity: 0.6;
+}
+
+.button_cari{
+	background-color: rgba(0, 0, 0, 0.1);
+    border: 0px;
+    width: 40px;
+    height: 40px;
+    border-radius: 0px 5px 5px 0px;
+    margin-left: 0px;
+    color: #fff;
+	position: absolute;
+	margin-left: -3px;
+	
 }

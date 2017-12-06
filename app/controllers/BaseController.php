@@ -89,7 +89,7 @@ class BaseController
 
 	public function base_url()
 	{
-		return "http://" . $_SERVER['SERVER_NAME'] . "/dev/awk-slim3/";
+		return "http://" . $_SERVER['SERVER_NAME'] . "/dev/awk-blog/";
 	}
 
 	public function addLog($log) 

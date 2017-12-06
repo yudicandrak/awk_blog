@@ -9,7 +9,7 @@ class myprofile extends BaseController
 	// Start funtion dashboard
 	public function index($request, $response){
 		if(isset($_COOKIE['jwtcookie'])) {
-			if( $this->decode_jwt($_COOKIE['jwtcookie']) == '1' ) {
+			// if( $this->decode_jwt($_COOKIE['jwtcookie']) == '1' ) {
 				//$data = [ 'username' => $_COOKIE['username'] ];
 				$s = "select id_user, full_name	, photo from wp_user where id_user = $_COOKIE[id_user]";
 				$s = $this->db->prepare($s);
@@ -20,23 +20,42 @@ class myprofile extends BaseController
 				$this->view->render($response, 'header_page.php', $data);
 				$this->view->render($response, 'v_myprofile.php', $data);
 				$this->view->render($response, 'footer_page.php', $data);
-			}else{
+			} else {
 				setcookie('jwtcookie', null, -1, '/');
 	    		setcookie('username', null, -1, '/');
 	    		setcookie('id_user', null, -1, '/');
 	    		$this->view->render($response, 'login/login.php');
 			}
-		}else{
-			$this->view->render($response, 'login/login.php');
-		}
+
+		// } else {
+
+		// 	$this->view->render($response, 'login/login.php');
+		// }
 	}
 	
 	public function get_profile($request, $response){
 		try {
-			$s = "select full_name, photo, home_address, job_title from wp_user where id_user = $_COOKIE[id_user]";
+			$s = "SELECT MU.*, MT.NM_UNIT, MD.NM_DEPARTEMENT
+					FROM `M_USER` MU 
+					     JOIN M_UNIT MT ON MU.KD_UNIT = MT.KD_UNIT
+					     JOIN M_DEPARTEMENT MD ON MT.KD_DEPARTEMENT = MD.KD_DEPARTEMENT
+					WHERE ID_USER = '".$_COOKIE['id_user']."'";
 			$s = $this->db->prepare($s);
 			$s->execute();
-			$data = $s->fetchAll(\PDO::FETCH_ASSOC);
+			$data = $s->fetch(\PDO::FETCH_ASSOC);
+
+			foreach ($data as $k => $v) {
+				// $dt[$k] = $v; 
+				$dt['USERNAME'] => $v['USERNAME'];
+			    dt['USERPASS'] => $v['USERPASS'];
+			    // [FULLNAME] => yudi
+			    // [ID_ROLE] => 1
+			}
+
+
+
+			print_r($dt); 
+			exit();
             return json_encode($data[0]);
         } catch (PDOException $e) {
             return $this->jsonFail("Can not load data", array('error'=>$e->getMessage()));

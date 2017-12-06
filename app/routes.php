@@ -1,8 +1,7 @@
 <?php 
 
-
 // Routes login and logout
-$app->get('/', 'HomeController:index');
+$app->get('/', 'dashboardControl:index');
 $app->post('/login', 'HomeController:login');
 $app->post('/logout', 'HomeController:logout');
 
@@ -44,6 +43,7 @@ $app->post('/logout', 'HomeController:logout');
 	$app->post('/t_view_post', 'dashboardControl:t_view_post');
 
 	// Routes My Blog
+	$app->post('/search_blog','HomeController:search_blog');
 	$app->post('/get_myblog', 'HomeController:get_myblog');
 	$app->get('/myblog', 'HomeController:myblog');
 	$app->post('/get_category', 'HomeController:get_category');
@@ -51,11 +51,10 @@ $app->post('/logout', 'HomeController:logout');
 	$app->post('/del_blog', 'HomeController:del_blog');
 	$app->post('/edit_post', 'HomeController:edit_post');
 	$app->post('/upd_blog', 'HomeController:upd_blog');
-	$app->post('/uplFiles[/{id_post}]', 'HomeController:uplFiles');
+	$app->post('/uplFiles', 'HomeController:uplFiles');
 	$app->get('/get_list_upl', 'HomeController:get_list_upl');
 	$app->post('/delete_upl','HomeController:delete_upl');
 	$app->get('/downFiles', 'HomeController:downFiles');
-	$app->post('/coba_baseurl', 'HomeController:coba_baseurl');
 
 //Routes My Profile
 $app->get('/myprofile', 'myprofile:index');

@@ -5,7 +5,7 @@ session_start();
 require __DIR__ . '/../vendor/autoload.php';
 
 try{
-	$pdo = new PDO('mysql:dbname=awk_blog; dbhost=10.15.3.183', 'devsisi', 'indonesiatujuhbelas');
+	$pdo = new PDO('mysql:dbname=db_allweknow; dbhost=10.15.3.183', 'devsisi', 'indonesiatujuhbelas');
 }
 catch (PDOException $e){
 	die("Database connection problem");

@@ -143,7 +143,7 @@
 .csslider1 > #cs_pause1_2:checked ~ .cs_arrowprev > label.num1,
 .csslider1 > #cs_slide1_2:checked ~ .cs_arrownext > label.num0,
 .csslider1 > #cs_pause1_2:checked ~ .cs_arrownext > label.num0 {
-  opacity: 1;
+  opacity: 0.7;
   z-index: 5;
 }
 
@@ -261,6 +261,7 @@
 .csslider1 > #cs_play1:checked ~ .cs_play_pause > .cs_pause,
 .csslider1 > .slide:checked ~ .cs_play_pause > .cs_play,
 .csslider1 > .pause:checked ~ .cs_play_pause > .cs_play {
+  opacity: 0.7;
   display: block;
   z-index: 5;
 }
@@ -290,7 +291,7 @@
   animation: pauseChange1 24000ms infinite -2000ms;
 }
 .csslider1 > #cs_play1:checked ~ .cs_play_pause > .cs_pause.num1 {
-  opacity: 0;
+  opacity: 0.7;
   z-index: -1;
   -webkit-animation: pauseChange1 24000ms infinite 6000ms;
   animation: pauseChange1 24000ms infinite 6000ms;
@@ -765,8 +766,7 @@ _:-ms-input-placeholder, :root .csslider1 > .cs_play_pause > label span:after {
   font-size: 20px;
   line-height: normal;
   bottom: 50px;
-  top: 10px;
-  left: 10px;
+  top: 0px;
 }
 
 .csslider1 > .cs_description > label > span {
@@ -811,8 +811,8 @@ _:-ms-input-placeholder, :root .csslider1 > .cs_play_pause > label span:after {
   transform: translateY(0);
 }
 .csslider1 > .cs_description > label > .cs_title {
-  background-color: rgba(0, 0, 0, 0.5);
-  width: 98%;
+  background-color: rgba(0, 0, 0, 0.7);
+  width: 100%;
   opacity: 0;
   visibility: hidden;
   z-index: 2;
@@ -1145,8 +1145,14 @@ only screen and (                max-resolution: 2dppx)  and (max-width: 480px) 
 
 .col_white{
 	color:#fff;
+	font-size: 40px;
+	font-weight: 300;
+	line-height: 1.1;
 }
 
 .detpost{
 	margin-top:20px;
+	font-size: 14px;
+	font-weight: 600;
+	color: #9b9b9b;
 }

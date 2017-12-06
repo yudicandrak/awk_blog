@@ -15,6 +15,10 @@
   <!-- jQuery Validation -->
   <script type="text/javascript" src="{{ base_url }}bootstrap/jquery-validation/dist/jquery.validate.js"></script>
 
+  <!-- Loading .js -->
+  <link href="{{ base_url }}bootstrap/loading/dist/jquery.loading.css" rel="stylesheet">
+  <script src="{{ base_url }}bootstrap/loading/dist/jquery.loading.js"></script>
+ 
 <!-- page content  -->
   <div class="">
     <div class="page-title">
@@ -25,9 +29,9 @@
       <div class="title_right">
         <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
           <div class="input-group">
-            <input type="text" class="form-control" placeholder="Search for...">
+            <input id="bar-search" type="text" class="form-control" placeholder="Search for...">
             <span class="input-group-btn">
-              <button class="btn btn-default" type="button">Go!</button>
+              <button id="btn-search" class="btn btn-default" type="button">Go!</button>
             </span>
           </div>
         </div>
@@ -67,7 +71,7 @@
           <br/><br/><br/>
 
           <!-- Modal Post -->
-          <div id="modal_post" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+          <div id="modal_post" class="modal fade" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-lg">
               <div class="modal-content">
 
@@ -160,18 +164,10 @@
 
                         <br/>
 
-                        <!-- <div class="form-group">
-                          <label class="control-label col-md-1 col-sm-1 col-xs-12" for="website">Reference <span class="required"></span>
-                          </label>
-                          <div class="col-md-10 col-sm-10 col-xs-12">
-                            <input type="url" id="post_url" name="post_url" required="required" class="form-control col-md-7 col-xs-12">
-                          </div>
-                        </div> -->
-
                         <div class="form-group">
                           <label class="control-label col-md-1 col-sm-1 col-xs-12">Reference</label>
                           <div class="col-md-10 col-sm-10 col-xs-12">
-                            <input id="post_url" type="text" name="post_url" class="tags form-control" value="www.example.com" />
+                            <input id="post_url" type="text" name="post_url" class="tags form-control" />
                             <div id="suggestions-container" style="position: relative; float: left; width: 250px; margin: 10px;"></div>
                           </div>
                         </div>
@@ -180,7 +176,7 @@
                           <label class="control-label col-md-1 col-sm-1 col-xs-12" for="logo">Thumbnail <span class="required"></span>
                           </label>
                           <div class="col-md-10 col-sm-10 col-xs-12">
-                            <input id="thumbnail" name="thumbnail" type="file" required="required" /> <br />
+                            <input id="thumbnail" name="thumbnail" type="file" required="required" accept="image/*"/> <br />
                           </div>
                         </div>       
 
@@ -190,7 +186,7 @@
                     <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
                       <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                       <button class="btn btn-primary" type="reset">Reset</button>
-                      <button class="btn btn-success" type="submit" >Submit</button>
+                      <button id="btn-post" class="btn btn-success" type="button" >Submit</button>
                     </div>
                   </div>
 
@@ -222,49 +218,8 @@
 
     $(document).ready( function() {     
 
-      $.ajax({
-        url : "get_myblog",
-        type : "POST",
-        success : function(data) 
-        {
-          var obj = JSON.parse(data);
-          for (var k in obj) {         
-            // console.log(obj[k]);    
-            var div = document.createElement('DIV');
-            div.setAttribute("class", "dashboard-widget-content");
-            div.innerHTML = 
-            "<div class='col-md-9 col-sm-9 col-xs-12'>" +
-              "<ul class='list-unstyled timeline widget'>" +
-              "<li>" +
-                "<div class='block'>" +
-                  "<div class='block_content'>" +
-                  "<h2 class='title'>" +
-                    "<a> " + obj[k]['post_title'] + " </a>" +
-                  "</h2>" +
-                "<div class='byline'>" +
-              "<span> " + obj[k]['upd_date'] + " </span> by <a> me </a>" +
-            "</div>" +
-            "<p class='excerpt'> " + obj[k]['post_content'] + " </p>" + 
-                  "</div>" +
-                "</div>" +
-              "</li>" +       
-              "</ul>" +
-            "</div>" +
-            "<div class='col-md-3 col-sm-3'>" +
-              "<a class='btn btn-app' data-toggle='modal' onclick='upl_post("+ obj[k]['id_post'] +"); tbl_upl("+ obj[k]['id_post'] +");' data-target='#modal_upload'>" +
-                "<i class='fa fa-cloud-upload'></i> Upload" +
-              "</a>" +
-              "<a class='btn btn-app' data-toggle='modal' onclick='edit_post("+ obj[k]['id_post'] +")' data-target='#modal_edit'>" +
-                "<i class='fa fa-edit'></i> Edit" +
-              "</a>" +
-              "<a class='btn btn-app' data-toggle='modal' onclick='del_blog(" + obj[k]['id_post'] + "," + obj[k]['id_user'] + ")' data-target='#modal_delete'>" +
-                "<i class='fa fa-remove'></i> Remove" +
-              "</a>" +
-            "</div>"; 
-          document.getElementById('list_myblog').appendChild(div);
-          };
-        }
-      });
+      get_blog();
+
     }); 
 
     </script>
@@ -278,6 +233,8 @@
   <div id="modal_upload" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
+
+        <input type="text" id="id_post_upl" hidden="true">
 
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
@@ -296,23 +253,29 @@
           </table>
         </div>
 
+        <div class="spinner" style="height: 50px; width: 50px; display: none;">
+          <div class="dot1"></div>
+          <div class="dot2"></div>
+        </div>
+
         <button id="uplfile" class="btn btn-rounded btn-primary" onclick="addupl()" style="margin-left: 20px;margin-top: 20px"> <i class='fa fa-plus-square'></i></button>        
-        <form id="form_upload" method="POST"  enctype="multipart/form-data">
+        <form id="form_upload" >
           <div class="modal-body">
             <div style="white-space: nowrap;">            
               <h5>Choose file</h5>
                 <div >
                   <table id="chsFileUpl">
-                    <tr><!-- example html
-                      <td><input type="file" name="uplName[]" id="uplName"></td>
-                      <td><button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus-square"></i></button></td>
-                    </tr> -->
+                    <tr>
+                      <!-- example html -->
+                      <!-- <td><input type="file" class="uplName" name="uplName[]" id="uplName"></td>
+                      <td><button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus-square"></i></button></td> -->
+                    </tr>
                   </table>                  
                 </div>
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn btn-success" type="submit" onclick="checkUpl()">Upload</button>
+            <button id="btn-upload" class="btn btn-success" type="button">Upload</button>
             <button id="btn-cancel" class="btn btn-info" data-dismiss="modal" onclick="emptyListUpl()" >Cancel</button>                  
           </div>
         </form>                          
@@ -354,7 +317,7 @@
     var tr = document.createElement("tr");
     tr.setAttribute("id","id_tr"+k);
     tr.innerHTML = 
-      "<td><input type='file' name='uplName[]' id='uplName"+ k +"'></td>"+
+      "<td><input type='file' class='uplName' name='uplName[]' id='uplName'></td>"+
       "<td><button type='button' class='btn btn-danger btn-xs' onclick='remove_upl("+ k +")'><i class='fa fa-minus-square'></i></button></td>";
 
     document.getElementById("chsFileUpl").appendChild(tr);
@@ -395,7 +358,7 @@
 <!--End Modal Delete -->
 
 <!-- Modal Edit -->
-  <div id="modal_edit" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div id="modal_edit" class="modal fade" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
 
@@ -437,18 +400,10 @@
               </div>
             </div>
 
-            <!-- <div class="form-group">
-              <label class="control-label col-md-1 col-sm-1 col-xs-12" for="website">URL <span class="required"></span>
-              </label>
-              <div class="col-md-10 col-sm-10 col-xs-12">
-                <input type="url" id="upd_url" name="upd_url" required="required" class="form-control col-md-7 col-xs-12">
-              </div>
-            </div> -->
-
             <div class="form-group">
               <label class="control-label col-md-1 col-sm-1 col-xs-12">Reference</label>
               <div class="col-md-10 col-sm-10 col-xs-12">
-                <input id="upd_url" type="text" name="post_url" class="tags form-control" />
+                <input id="upd_url" type="text" name="upd_url" class="tags form-control" />
                 <div id="suggestions-container" style="position: relative; float: left; width: 250px; margin: 10px;"></div>
               </div>
             </div>            
@@ -470,15 +425,82 @@
 <!-- End Modal Edit -->
 
 <script type="text/javascript"> 
-
   $(document).ready(function() {
+
+    window.onload = function () { 
+      $('body').loading('stop');
+    }
+
+    window.onbeforeunload = function() {
+      return "Are you sure to leave!";
+    }
+
     $('#post_url').tagsInput({
-      width: 'auto'
+      'width': 'auto',
+      'defaultText': 'add reference'
     });
 
     $('#upd_url').tagsInput({
-      width: 'auto'
+      'width': 'auto',
+      'defaultText': 'add reference'
     });
+  });
+
+  $('#btn-search').click(function(e){
+    var k = $('#bar-search').val();
+
+    if(k == '') {
+      $("#list_myblog").empty(); 
+      get_blog();
+    } else {      
+      $.post("search_blog", { k : k }, function(data){
+        $("#list_myblog").empty(); 
+        // alert(data);
+        var obj = JSON.parse(data);
+        for (var k in obj) {   
+
+          var content = obj[k]['post_content'].substring(0, 100);
+          if(obj[k]['post_content'].length > 100) {
+            var see = "<b><i>See more ...<i></b>";
+          } else {
+            var see = "";
+          }
+
+          var div = document.createElement('DIV');
+          div.setAttribute("class", "dashboard-widget-content");
+          div.innerHTML = 
+          "<div class='col-md-9 col-sm-9 col-xs-12'>" +
+            "<ul class='list-unstyled timeline widget'>" +
+            "<li>" +
+              "<div class='block'>" +
+                "<div class='block_content'>" +
+                "<h2 class='title'>" +
+                  "<a> " + obj[k]['post_title'] + " </a>" +
+                "</h2>" +
+              "<div class='byline'>" +
+            "<span> " + obj[k]['upd_date'] + " </span> by <a> me </a>" +
+          "</div>" +
+          "<p class='excerpt'> " + content + " " + see + " </p>" + 
+                "</div>" +
+              "</div>" +
+            "</li>" +       
+            "</ul>" +
+          "</div>" +
+          "<div class='col-md-3 col-sm-3'>" +
+            "<a class='btn btn-app' data-toggle='modal' onclick='upl_post("+ obj[k]['id_post'] +"); tbl_upl("+ obj[k]['id_post'] +");' data-target='#modal_upload'>" +
+              "<i class='fa fa-cloud-upload'></i> Upload" +
+            "</a>" +
+            "<a class='btn btn-app' data-toggle='modal' onclick='edit_post("+ obj[k]['id_post'] +")' data-target='#modal_edit'>" +
+              "<i class='fa fa-edit'></i> Edit" +
+            "</a>" +
+            "<a class='btn btn-app' data-toggle='modal' onclick='del_blog(" + obj[k]['id_post'] + "," + obj[k]['id_user'] + ")' data-target='#modal_delete'>" +
+              "<i class='fa fa-remove'></i> Remove" +
+            "</a>" +
+          "</div>"; 
+        document.getElementById('list_myblog').appendChild(div);
+        };
+      });
+    }
   });
 
   function get_blog()
@@ -489,7 +511,15 @@
         success : function(data) 
         {
           var obj = JSON.parse(data);
-          for (var k in obj) {        
+          for (var k in obj) {   
+
+            var content = obj[k]['post_content'].substring(0, 100);
+            if(obj[k]['post_content'].length > 100) {
+              var see = "<b><i>See more ...<i></b>";
+            } else {
+              var see = "";
+            }
+
             var div = document.createElement('DIV');
             div.setAttribute("class", "dashboard-widget-content");
             div.innerHTML = 
@@ -504,7 +534,7 @@
                 "<div class='byline'>" +
               "<span> " + obj[k]['upd_date'] + " </span> by <a> me </a>" +
             "</div>" +
-            "<p class='excerpt'> " + obj[k]['post_content'] + " </p>" + 
+            "<p class='excerpt'> " + content + " " + see + " </p>" + 
                   "</div>" +
                 "</div>" +
               "</li>" +       
@@ -529,46 +559,16 @@
 
   // CRUD TOP
   $(document).ready(function () {
-    $( "#add_blog" ).validate( {
-        event : 'blur',
-        rules: {
-          editor1: function(textarea) {
-          CKEDITOR.instances[textarea.id].updateElement(); // update textarea
-          var editorcontent = textarea.value.replace(/<[^>]*>/gi, ''); // strip tags
-          return editorcontent.length === 0;
-        },
-          agree: "required"
-        },
-        messages: {
-          editor1: "Please fill the content"
-        },
-        errorElement: "em",
-        errorPlacement: function ( error, element ) {
-          // Add the `help-block` class to the error element
-          error.addClass( "help-block" );
-
-          if ( element.prop( "type" ) === "checkbox" ) {
-            error.insertAfter( element.parent( "label" ) );
-          } else {
-            error.insertAfter( element );
-          }
-        },
-        highlight: function ( element, errorClass, validClass ) {
-          $( element ).parents( ".col-sm-5" ).addClass( "has-error" ).removeClass( "has-success" );
-        },
-        unhighlight: function (element, errorClass, validClass) {
-          $( element ).parents( ".col-sm-5" ).addClass( "has-success" ).removeClass( "has-error" );
-        }
-      } );
 
   //Program a custom submit function for the form
-    $("form#add_blog").submit(function(event){
+    $("#btn-post").click(function(event){
       
       //disable the default form submission
       event.preventDefault();
 
       //grab all form data  
-      var formData = new FormData($(this)[0]);
+      // var formData = new FormData($(this)[0]);
+      var formData = new FormData();
 
       var content = CKEDITOR.instances['editor1'].getData();
 
@@ -577,9 +577,132 @@
       } else {
         var tag = '0';
       }
+      
+      formData.append('post_title', document.getElementById('post_title').value);
+      formData.append('post_schedule', document.getElementById('single_cal1').value);
+      formData.append('post_content', content);
+      formData.append('post_tag', tag);
+      formData.append('post_url', document.getElementById('post_url').value);
+      formData.append('thumbnail', $('input[type=file]')[0].files[0]); 
 
-      $.ajax({
-        url: 'post_blog?post_tag='+ tag +'&post_content='+ content,
+      if(document.getElementById('post_title').value == '') {
+        new PNotify({
+          title: 'Alert',
+          text: 'Add Title!',
+          type: 'error',
+          styling: 'bootstrap3'
+        });
+      } else if(document.getElementById('single_cal1').value == '') {
+        new PNotify({
+          title: 'Alert',
+          text: 'Add Schedule Post!',
+          type: 'error',
+          styling: 'bootstrap3'
+        });
+      } else if(!content) {
+        new PNotify({
+          title: 'Alert',
+          text: 'Add Content!',
+          type: 'error',
+          styling: 'bootstrap3'
+        });
+      } else if($('#inp_tag').val() == null) {
+        new PNotify({
+          title: 'Alert',
+          text: 'Add Tag!',
+          type: 'error',
+          styling: 'bootstrap3'
+        });
+      } else if( document.getElementById('post_url').value == '' ) {
+        new PNotify({
+          title: 'Alert',
+          text: 'Add Reference!',
+          type: 'error',
+          styling: 'bootstrap3'
+        });
+      } else if(document.getElementById("thumbnail").value == "") {
+        new PNotify({
+          title: 'Alert',
+          text: 'Add Thumbnail!',
+          type: 'error',
+          styling: 'bootstrap3'
+        });
+      } else {
+        $.ajax({
+          url: 'post_blog',
+          type: 'POST',
+          data: formData,
+          async: false,
+          cache: false,
+          contentType: false,
+          processData: false,
+          success: function (returndata) {
+            // alert(returndata);
+            if(returndata == '0') {              
+              new PNotify({
+                title: 'Success',
+                text: 'Upload Success!',
+                type: 'info',
+                styling: 'bootstrap3'
+              }); 
+            } else {
+              if(returndata == '1') {
+                var alert = 'File should less than 5kb!';
+              } else if (returndata == '2') {
+                var alert = 'File Corrupt!';
+              } else {
+                var alert = 'File should image!';
+              }
+              new PNotify({
+                title: 'Alert',
+                text: alert,
+                type: 'error',
+                styling: 'bootstrap3'
+              });
+              return false;
+            }
+
+            $('#modal_post').modal('hide');
+            document.getElementById('add_blog').reset();
+            CKEDITOR.instances.editor1.setData('');
+            $("#inp_tag").empty().trigger('change')
+            $('#post_url').importTags('');
+            $("#list_myblog").empty(); 
+            get_blog();
+          }
+        });            
+      }
+    });
+
+    $("#btn-upload").click(function(event){
+
+      $(document).ajaxStart(function(){
+        $("div.spinner").css('display','block');
+      });
+      
+      //disable the default form submission
+      event.preventDefault();
+
+      //grab all form data  
+      // var formData = new FormData($(this)[0]);
+      var formData = new FormData();
+
+      var fileInput = document.getElementsByClassName("uplName").length;
+      for (var x = 0; x < fileInput; x++) {
+        formData.append("uplName[]", document.getElementsByClassName('uplName')[x].files[0]);
+      }
+        formData.append("id_post", document.getElementById("id_post_upl").value);
+
+      if(document.getElementById("uplName").value == "") {
+        new PNotify({
+          title: 'Alert',
+          text: 'Add File!',
+          type: 'error',
+          styling: 'bootstrap3'
+        });
+      } else {
+        $.ajax({
+        url: 'uplFiles',
         type: 'POST',
         data: formData,
         async: false,
@@ -588,57 +711,39 @@
         processData: false,
         success: function (returndata) {
           // alert(returndata);
-        }
-      });
-    });
-  });
-
-
-  function submit_blog()
-  { 
-    var title   = document.getElementById('post_title').value;
-    var date    = document.getElementById('single_cal1').value;
-    var content = document.getElementById('blog-content').innerHTML;
-    var tag     = $('#inp_tag').val();
-    var url     = document.getElementById('post_url').value; 
-  
-
-    if(title == '' || content == '' || tag == '' || url == '' ) {
-      new PNotify({
-        title: 'Alert',
-        text: 'Complete form!',
-        type: 'error',
-        styling: 'bootstrap3'
-      });
-
-      document.getElementById('add_blog').reset();
-
-    } else {
-
-      $.ajax({
-        url     : 'post_blog',
-        data    : { title : title, date : date, content : content, tag : tag, url : url},
-        type    : "POST",
-        success : function(data){
-          new PNotify({
-            title: 'Success',
-            text: 'Post Success!',
-            type: 'success',
-            styling: 'bootstrap3'
+          $(document).ajaxComplete(function(){            
+            $("div.spinner").css('display','none');
           });
-          // location.reload();
+
+          if(returndata == '0') {
+            new PNotify({
+              title: 'Success',
+              text: 'Upload Success!',
+              type: 'info',
+              styling: 'bootstrap3'
+            });
+          } else {
+            if(returndata == '1') {
+              var alert = 'File should less than 2mb!'
+            } else {
+              var alert = 'File Corrupt!';
+            }
+            new PNotify({
+              title: 'Alert',
+              text: alert,
+              type: 'error',
+              styling: 'bootstrap3'
+            });           
+          }
+          $('#list_upload').DataTable().ajax.reload();
+          emptyListUpl();
         }
-      });
-
-      document.getElementById('add_blog').reset();
-
-      $("#list_myblog").empty(); 
-      $('#modal_post').modal('hide');
-
-      get_blog();
-
+      });      
     }
-  }
+      
+    });
+
+  });
 
   function del_blog(id_post, id_user)
   { 
@@ -646,26 +751,29 @@
   }
 
   function del_post(id_post, id_user)
-  {        
-    $.ajax({
-      url     : 'del_blog',
-      data    : { id_post : id_post, id_user : id_user},
-      type    : "POST",
-      success : function(data) {
-        new PNotify({
-          title: 'Success',
-          text: 'Delete Success!',
-          type: 'success',
-          styling: 'bootstrap3'
-        });
-        // location.reload();
-      }
+  {    
+
+    $.post("edit_post", { id_post : id_post }, function(data){
+      obj = JSON.parse(data);
+      var filename = obj[0]['media'];
+
+      $.ajax({
+        url     : 'del_blog',
+        data    : { id_post : id_post, id_user : id_user, filename : filename},
+        type    : "POST",
+        success : function(data) {
+          new PNotify({
+            title: 'Success',
+            text: 'Delete Success!',
+            type: 'success',
+            styling: 'bootstrap3'
+          });
+          $("#list_myblog").empty();
+          get_blog();
+        }
+      });
     });
 
-    $("#list_myblog").empty(); 
-    // $("#category").empty(); 
-
-    get_blog();
   }
 
   // OPEN MODAL EDIT
@@ -790,7 +898,7 @@
   // UPLOAD MODAL
   function upl_post(id_post)
   {
-   document.getElementById('form_upload').setAttribute("action","uplFiles/"+id_post);
+   document.getElementById('id_post_upl').setAttribute("value",id_post);
   }
   
   function del_upl(id_upload)
@@ -857,41 +965,73 @@
           "url": "get_list_upl",
           "data": { id_post: id_post }
         },
+        dom: 'Bfrtip',
+        lengthMenu: [
+          [ 10, 25, 50, -1 ],
+          [ '10 rows', '25 rows', '50 rows', 'Show all' ]
+        ],
+        buttons: [
+          'pageLength'
+        ]
       } );
 
     }
 
   </script>
 
+  <style type="text/css">
+    
+.spinner {
+  margin: 100px auto;
+  width: 40px;
+  height: 40px;
+  position: relative;
+  text-align: center;
+  
+  -webkit-animation: sk-rotate 2.0s infinite linear;
+  animation: sk-rotate 2.0s infinite linear;
+}
 
-    <!-- validator -->
-    <!-- <script>
-      // initialize the validator function
-      validator.message.date = 'not a real date';
+.dot1, .dot2 {
+  width: 60%;
+  height: 60%;
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  /*background-color: #333;*/
+  border-radius: 100%;
+  
+  -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
+  animation: sk-bounce 2.0s infinite ease-in-out;
+}
 
-      // validate a field on "blur" event, a 'select' on 'change' event & a '.reuired' classed multifield on 'keyup':
-      $('form')
-        .on('blur', 'input[required], input.optional, select.required', validator.checkField)
-        .on('change', 'select.required', validator.checkField)
-        .on('keypress', 'input[required][pattern]', validator.keypress);
+.dot1 {
+  background-color: #e67e22;
+}
 
-      $('.multi.required').on('keyup blur', 'input', function() {
-        validator.checkField.apply($(this).siblings().last()[0]);
-      });
+.dot2 {
+  top: auto;
+  bottom: 0;
+  background-color: #3498db;
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s;
+}
 
-      $('form').submit(function(e) {
-        e.preventDefault();
-        var submit = true;
+@-webkit-keyframes sk-rotate { 100% { -webkit-transform: rotate(360deg) }}
+@keyframes sk-rotate { 100% { transform: rotate(360deg); -webkit-transform: rotate(360deg) }}
 
-        // evaluate the form using generic validaing
-        if (!validator.checkAll($(this))) {
-          submit = false;
-        }
+@-webkit-keyframes sk-bounce {
+  0%, 100% { -webkit-transform: scale(0.0) }
+  50% { -webkit-transform: scale(1.0) }
+}
 
-        if (submit)
-          this.submit();
-
-        return false;
-      });
-    </script> -->
-    <!-- /validator
+@keyframes sk-bounce {
+  0%, 100% { 
+    transform: scale(0.0);
+    -webkit-transform: scale(0.0);
+  } 50% { 
+    transform: scale(1.0);
+    -webkit-transform: scale(1.0);
+  }
+}
+</style>

@@ -9,40 +9,36 @@ class dashboardControl extends BaseController
 	// Start funtion dashboard
 	public function index($request, $response){
 		if(isset($_COOKIE['jwtcookie'])) {
-			if( $this->decode_jwt($_COOKIE['jwtcookie']) == '1' ) {
-				//$data = [ 'username' => $_COOKIE['username'] ];
-				$s = "select id_user, full_name, photo from wp_user where id_user = $_COOKIE[id_user]";
-				$s = $this->db->prepare($s);
-				$s->execute();
-				$dt = $s->fetch(\PDO::FETCH_ASSOC);
-				$data = array('full_name' => $dt['full_name'], 'photo' => $dt['photo'], 'base_url' => $this->base_url() );
-				//$data = $dt[0];
-				$this->view->render($response, 'header_page.php', $data);
-				$this->view->render($response, 'dashboard.php', $data);
-				$this->view->render($response, 'footer_page.php', $data);
-			}else{
-				setcookie('jwtcookie', null, -1, '/');
-	    		setcookie('username', null, -1, '/');
-	    		setcookie('id_user', null, -1, '/');
-	    		$this->view->render($response, 'login/login.php');
-			}
+			$s = "select id_user, fullname, foto from M_USER where id_user = $_COOKIE[id_user]";
+			$s = $this->db->prepare($s);
+			$s->execute();
+			$dt = $s->fetch(\PDO::FETCH_ASSOC);
+			//print_r($dt);exit;
+			$data = array('fullname' => $dt['fullname'], 'photo' => "data:image;base64,".base64_encode( $dt['foto'] ), 'base_url' => $this->base_url() );
+			//$data = $dt[0];
+			$this->view->render($response, 'header_page.php', $data);
+			$this->view->render($response, 'dashboard.php', $data);
+			$this->view->render($response, 'footer_page.php', $data);
 		}else{
+			setcookie('jwtcookie', null, -1, '/');
+			setcookie('username', null, -1, '/');
+			setcookie('id_user', null, -1, '/');
 			$this->view->render($response, 'login/login.php');
 		}
 	}
 
 	// Function slider
-	public function cont_slide($request, $response)
-	{
+	public function cont_slide($request, $response){
 		try {
 			$s = "
 				select * from (
-				  select wu.full_name, wp.id_post as id_post, wp.post_title, wp.post_date, if(wp.media <> '', concat('image_post/',wp.media), 'default_news.png') as media, count(wc.id_comment) as jml_comment
-				    from wp_post wp join wp_comment wc on wp.id_post = wc.id_post
-				    join wp_user wu on wp.id_user = wu.id_user
+				  select wu.fullname, wp.rating_post, wp.status, wp.id_post as id_post, wp.post_title, wp.post_date, if(wp.media <> '', concat('image_post/',wp.media), 'default_news.png') as media
+				    from wp_post wp
+				    join M_USER wu on wp.id_user = wu.id_user
+					where wp.status <> 2
 				  group by wp.id_post
 				) as new
-				order by jml_comment desc
+				order by status desc, rating_post desc
 				limit 3";
 			$s = $this->db->prepare($s);
 			$s->execute();
@@ -56,12 +52,24 @@ class dashboardControl extends BaseController
 	
 	public function get_post($request, $response){
 		try {
-			$s = "SELECT ps.id_post, ps.post_title, ps.media, ps.user_like, ps.post_date, us.full_name,
+			$page = 1;
+			$pg_max = 9;
+			$pg_min = 0;
+			if($_POST['epage']){
+				$page = $_POST['epage'];
+				$pg_max = ($page*10)-1;
+				$pg_min = $pg_max-9;
+			}
+			$s = "SELECT ps.id_post, ps.post_title, ps.media, ps.user_like, ps.post_date, us.fullname, (select count(id_post) from wp_post wp2 where wp2.status<>2) as count_post,
 				(select count(id_comment) from wp_comment cm where id_post = ps.id_post and status = 0) as c_comment
-				FROM wp_post ps join wp_user us ON ps.id_user = us.id_user where ps.post_date < NOW() order by ps.post_date desc";
+				FROM wp_post ps join M_USER us ON ps.id_user = us.id_user where ps.post_date < NOW() and ps.status <> 2 order by ps.post_date desc
+				limit ".$pg_min.", ".$pg_max;
 			$s = $this->db->prepare($s);
 			$s->execute();
 			$data = $s->fetchAll(\PDO::FETCH_ASSOC);
+			
+			$count_post = ceil($data[0]['count_post']/10);
+			$data[0]['count_post'] = $count_post;
 			foreach($data as $k=>$v){
 				$v_like = $u_like = $like = '';
 				$c_like = 0;
@@ -103,10 +111,13 @@ class dashboardControl extends BaseController
 	public function views_comment($request, $response){
 		$id_post = $_POST['eid_post'];
 		try {
-			$s = "SELECT cm.*, us.username, us.photo FROM wp_comment cm join wp_user us on cm.id_user = us.id_user WHERE id_post = '$id_post' and cm.status = 0";
+			$s = "SELECT cm.*, us.fullname, us.foto FROM wp_comment cm join M_USER us on cm.id_user = us.id_user WHERE id_post = $id_post and cm.status = 0";
 			$s = $this->db->prepare($s);
 			$s->execute();
 			$data['isi'] = $s->fetchAll(\PDO::FETCH_ASSOC);
+			foreach($data['isi'] as $k=>$v){
+				$data['isi'][$k]['foto'] = "data:image;base64,".base64_encode( $v['foto'] );
+			}
 			$data['id_user'] = $_COOKIE['id_user'];
             return json_encode($data);
 			
@@ -248,32 +259,31 @@ class dashboardControl extends BaseController
 	
 	public function view_post($request, $response){
 		if(isset($_COOKIE['jwtcookie'])) {
-			if( $this->decode_jwt($_COOKIE['jwtcookie']) == '1' ) {
-				//$data = [ 'username' => $_COOKIE['username'] ];
-				$s = "select id_user, full_name, photo from wp_user where id_user = $_COOKIE[id_user]";
-				$s = $this->db->prepare($s);
-				$s->execute();
-				$dt = $s->fetch(\PDO::FETCH_ASSOC);
-				$data = array('full_name' => $dt['full_name'], 'id_post'=>$_GET['eid_post'], 'photo' => $dt['photo'], 'base_url' => $this->base_url());
-				$this->view->render($response, 'header_page.php', $data);
-				$this->view->render($response, 'view_post.php', $data);
-				$this->view->render($response, 'footer_page.php', $data);
-			}else{
-				setcookie('jwtcookie', null, -1, '/');
-	    		setcookie('username', null, -1, '/');
-	    		setcookie('id_user', null, -1, '/');
-	    		$this->view->render($response, 'login/login.php');
-			}
+			$s = "select id_user, fullname, photo from M_USER where id_user = $_COOKIE[id_user]";
+			$s = $this->db->prepare($s);
+			$s->execute();
+			$dt = $s->fetch(\PDO::FETCH_ASSOC);
+			$data = array('fullname' => $dt['fullname'], 'id_post'=>$_GET['eid_post'],  'photo' => "data:image;base64,".base64_encode( $dt['foto'] ), 'base_url' => $this->base_url());
+			$this->view->render($response, 'header_page.php', $data);
+			$this->view->render($response, 'view_post.php', $data);
+			$this->view->render($response, 'footer_page.php', $data);
 		}else{
+			setcookie('jwtcookie', null, -1, '/');
+			setcookie('username', null, -1, '/');
+			setcookie('id_user', null, -1, '/');
 			$this->view->render($response, 'login/login.php');
 		}
 	}
 	
 	public function t_view_post($request, $response){
 		try {
-			$s = "	select wp.id_post, wp.post_title, wp.post_content, wp.tag, wp.url, wp.media, wp.post_date, wp.user_like, wp.rating_post, wu.id_user, wu.full_name, (select count(id_comment) from wp_comment where id_post = ".$_POST['eid_post']." and status = 0) as c_comment
-					from wp_post wp join wp_user wu on wp.id_user = wu.id_user
-					where id_post = ".$_POST['eid_post'];
+			$s = "	select group_concat(concat(wm.filename,'----', wm.id_upload) separator '____')as fn_media ,tbl2.* from(
+					select group_concat(taxonomi)as taxonomi ,tbl.* from 
+					(select wp.id_post, wp.tag, wp.post_title, wp.post_content, wp.url, wp.media, wp.post_date, wp.user_like, wp.rating_post, wu.id_user, wu.fullname, (select count(id_comment) from wp_comment where id_post = ".$_POST['eid_post']." and status = 0) as c_comment
+					from wp_post wp join M_USER wu on wp.id_user = wu.id_user
+					where id_post = ".$_POST['eid_post'].") tbl
+					left join wp_taxonomi wt on tbl.tag like concat('%',wt.id,'%')) tbl2
+					left join wp_media wm on tbl2.id_post = wm.id_post";
 			$s = $this->db->prepare($s);
 			$s->execute();
 			$data = $s->fetchAll(\PDO::FETCH_ASSOC);

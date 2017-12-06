@@ -39,98 +39,36 @@
   	<!-- <script src="{{ base_url }}bootstrap/jquery-3.2.1.js"></script> -->
     <!-- jQuery -->
     <script src="{{ base_url }}templates/vendors/jquery/dist/jquery.min.js"></script>
+
+    <!-- Loading .js -->
+    <link href="{{ base_url }}bootstrap/loading/dist/jquery.loading.css" rel="stylesheet">
+    <script src="{{ base_url }}bootstrap/loading/dist/jquery.loading.js"></script>
   </head>
 
   <body class="nav-md">
+    <script type="text/javascript">
+      $('body').loading({
+        theme: 'dark',
+        message : 'Working, please wait ...'
+      });
+    </script>
+
     <div class="container body">
       <div class="main_container">
-        <div class="col-md-3 left_col">
-          <div class="left_col scroll-view">
-            <div class="navbar nav_title" style="border: 0;">
-              <a href="dashboard" class="site_title"><i class="fa fa-circle-o-notch"></i> <span>AWK | Blog</span></a>
-            </div>
-
-            <div class="clearfix"></div>
-
-            <!-- menu profile quick info -->
-            <div class="profile clearfix">
-              <div class="profile_pic">
-                <img src="{{ base_url }}asset/photo_user/{{photo}}" alt="..." class="img-circle profile_img">
-              </div>
-              <div class="profile_info">
-                <span style="color:#fff; font-weight:800">Welcome,</span>
-                <h2>{{ full_name }}</h2>
-              </div>
-            </div>
-            <!-- /menu profile quick info -->
-
-            <br />
-
-            <!-- sidebar menu -->
-            <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
-              <div class="menu_section">
-                <h3>General</h3>
-                <ul class="nav side-menu">
-                  <script type="text/javascript">
-                    $.ajax({
-          						url: "sidemenu",
-          						type: "GET",
-          						success: function (data) {
-          							var obj = JSON.parse(data);
-          							for(var k in obj) {
-                          // console.log(obj[k]);
-          								var sk = k.split("___");
-          								var li = document.createElement('li');
-          								li.innerHTML =  "<a><i class='fa fa-"+sk[1]+"'></i> "+ sk[0] +" <span class='fa fa-chevron-down'></span></a>"+
-          												"<ul id='sidemenu_c"+k+"' class='nav child_menu'> </ul>";
-          								document.getElementsByClassName('side-menu')[0].appendChild(li);
-          								for(var kk in obj[k]) {
-          									for(var kkk in obj[k][kk]) {
-          										var li2 = document.createElement('li');
-          										li2.innerHTML = " <a href='"+ kk +"'> "+ obj[k][kk][kkk] +" </a> ";
-          										document.getElementById('sidemenu_c'+k).appendChild(li2);
-          									}
-          								}
-          							}
-          						}
-                    });
-                  </script>
-                </ul>
-              </div>
-            </div>
-            <!-- /sidebar menu -->
-
-            <!-- /menu footer buttons -->
-            <div class="sidebar-footer hidden-small">
-              <a data-toggle="tooltip" data-placement="top" title="Settings">
-                <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-              </a>
-              <a data-toggle="tooltip" data-placement="top" title="FullScreen">
-                <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
-              </a>
-              <a data-toggle="tooltip" data-placement="top" title="Lock">
-                <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
-              </a>
-              <a data-toggle="tooltip" data-placement="top" title="Logout" href="login.html">
-                <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
-              </a>
-            </div>
-            <!-- /menu footer buttons -->
-          </div>
-        </div>
-
-        <!-- top navigation -->
         <div class="top_nav">
           <div class="nav_menu">
             <nav>
               <div class="nav toggle">
-                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+				<a href="dashboard"><img height="45px" src="{{ base_url }}asset/awk_title.png" alt="all we know" style="margin-bottom:10px;"></a>
+				<div class="form-horizontal form-label-left" style="display:inline; float:right; margin-top:10px" novalidate>
+					<input type="text" id="name" name="esearch" placeholder="Search" class="input_cari">
+					<input type="submit" name="submit" class="button_cari" value=" "><i class="fa fa-search" style="color:#fff; font-size: 20px; margin-left:5px"></i>
+				</div>
               </div>
-
               <ul class="nav navbar-nav navbar-right">
                 <li class="">
                   <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <img src="{{ base_url }}asset/photo_user/{{photo}}" alt="">{{ full_name }}
+                    <img src="{{ photo }}" alt="">{{ fullname }}
                     <span class=" fa fa-angle-down"></span>
                   </a>
                   <ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -222,6 +160,42 @@
               </ul>
             </nav>
           </div>
+		  
+			<nav class="nav_menu_top">
+				<ul class="ul_menu_top">
+					<!--<li><a href="#">Home</a>
+						<ul>
+							<li><a href="dashboard" style="color:#fff">Dashboard</a></li>
+							<li><a href="myblog" style="color:#fff">My Blog</a></li>
+						</ul>
+					</li>
+					<li><a href="#">Dashboard</a></li>
+					<li><a href="#">Master</a></li>-->
+				</ul>
+			</nav>
+			<script type="text/javascript">
+				$.ajax({
+					url: "sidemenu",
+					type: "GET",
+					success: function (data) {
+						var obj = JSON.parse(data);
+						for(var k in obj) {
+							var sk = k.split("___");
+							var li = document.createElement('li');
+							li.innerHTML =  "<a href='#' class='menu_top_a'>"+ sk[0] +"</a>"+
+											"<ul id='menu_top"+k+"'></ul>";
+							document.getElementsByClassName('ul_menu_top')[0].appendChild(li);
+							for(var kk in obj[k]) {
+								for(var kkk in obj[k][kk]) {
+									var li3 = document.createElement('li');
+									li3.innerHTML = " <a href='"+ kk +"' class='sub_menu_top'> "+ obj[k][kk][kkk] +" </a> ";
+									document.getElementById('menu_top'+k).appendChild(li3);
+								}
+							}
+						}
+					}
+                });
+			</script>
         </div>
 		<div class="right_col" role="main">
 		

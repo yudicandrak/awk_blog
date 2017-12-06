@@ -7,6 +7,10 @@
 	<div id="body_profile" class="x_content">
 		<script type="text/javascript">
 			$( document ).ready(function() {
+				window.onload = function () { 
+					$('body').loading('stop');
+				}
+
 				get_profile();
 				$('#bchange_foto').on('click', function () {
 					//alert('lala');
@@ -39,7 +43,7 @@
 						div.setAttribute("class", "col-md-3 col-sm-3 col-xs-12 profile_left");
 						div.innerHTML = "<div class='profile_img'>"+
 											"<div onClick='change_foto()' class='profile-pic'>"+
-												"<img id='img_profile' class='img-responsive avatar-view' src='http://10.15.3.183/dev/awk-slim3/asset/photo_user/"+obj.photo+"'>"+
+												"<img id='img_profile' class='img-responsive avatar-view' src='{{ base_url }}asset/photo_user/"+obj.photo+"'>"+
 												"<div class='edit' style='color:#ffffff;'><i class='fa fa-camera' style='margin:5%;'> Edit Photo</i></div>"+
 											"</div>"+
 										"</div>"+
@@ -68,7 +72,7 @@
 			}
 			
 			function edit_profile(photo, address, job_title, name){
-				//$("#modal_img").html("<img class='img-responsive avatar-view' src='http://10.15.3.183/dev/awk-slim3/asset/"+photo+"'>");
+				//$("#modal_img").html("<img class='img-responsive avatar-view' src='{{ base_url }}asset/"+photo+"'>");
 				$("#modal_name").val(name);
 				$("#modal_address").val(address);
 				$("#modal_job").val(job_title);
@@ -365,8 +369,8 @@
 </div>
 <!-- end modal -->
 
-<script src="http://10.15.3.183/dev/awk-slim3/templates/vendors/raphael/raphael.min.js"></script>
-<script src="http://10.15.3.183/dev/awk-slim3/templates/vendors/morris.js/morris.min.js"></script>
+<script src="{{ base_url }}templates/vendors/raphael/raphael.min.js"></script>
+<script src="{{ base_url }}templates/vendors/morris.js/morris.min.js"></script>
 <style>
 .profile-pic {
 	position: relative;

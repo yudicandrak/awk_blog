@@ -22,7 +22,9 @@ class headlineControl extends BaseController
 			$this->view->render($response, 'footer_page.php', $data);
 
 		} else {
-
+			setcookie('jwtcookie', null, -1, '/');
+    		setcookie('username', null, -1, '/');
+    		setcookie('id_user', null, -1, '/');
 			$this->view->render($response, 'login/login.php');
 		}
 	}
@@ -31,90 +33,80 @@ class headlineControl extends BaseController
 	{
 
 		if(isset($_COOKIE['jwtcookie'])) {
-			if( $this->decode_jwt($_COOKIE['jwtcookie']) == '1' ) {   
-				
-				$s = "SELECT id_post, post_title, rating_post, status
-						FROM wp_post 
-						ORDER BY rating_post desc";
-				$s = $this->db->prepare($s);
-				$s->execute();
-				$dt = $s->fetchAll(\PDO::FETCH_ASSOC);
+			
+			$s = "SELECT id_post, post_title, rating_post, status
+					FROM wp_post 
+					ORDER BY rating_post desc";
+			$s = $this->db->prepare($s);
+			$s->execute();
+			$dt = $s->fetchAll(\PDO::FETCH_ASSOC);
 
-				foreach ($dt as $k => $v) {
-					foreach ($v as $kk => $vv) {
-						$dt[$k][] = $vv;
-					}
-					if($v['status'] == '1') {
-
-					$dt[$k][3] = 
-						'<center>
-						<label class="switch">
-						  <input type="checkbox" checked onclick="upd_status('.$v['id_post'].', 0)">
-						  <span class="slider round"></span>
-						</label>
-						</center>
-						';
-					} else {
-					$dt[$k][3] = 
-						'<center>
-						<label class="switch">
-						  <input type="checkbox" onclick="upd_status('.$v['id_post'].', 1)">
-						  <span class="slider round"></span>
-						</label>
-						</center>
-						';
-
-					}
+			foreach ($dt as $k => $v) {
+				foreach ($v as $kk => $vv) {
+					$dt[$k][] = $vv;
 				}
-				$dt1['data'] = $dt;
-				return json_encode($dt1);
+				if($v['status'] == '1') {
 
-	    	} else {
-	    		setcookie('jwtcookie', null, -1, '/');
-	    		setcookie('username', null, -1, '/');
-	    		setcookie('id_user', null, -1, '/');
-	    		$this->view->render($response, 'login/login.php');
-	    	}    	
+				$dt[$k][3] = 
+					'<center>
+					<label class="switch">
+					  <input type="checkbox" checked onclick="upd_status('.$v['id_post'].', 0)">
+					  <span class="slider round"></span>
+					</label>
+					</center>
+					';
+				} else {
+				$dt[$k][3] = 
+					'<center>
+					<label class="switch">
+					  <input type="checkbox" onclick="upd_status('.$v['id_post'].', 1)">
+					  <span class="slider round"></span>
+					</label>
+					</center>
+					';
+
+				}
+			}
+			$dt1['data'] = $dt;
+			return json_encode($dt1);
 
     	} else {
+    		setcookie('jwtcookie', null, -1, '/');
+    		setcookie('username', null, -1, '/');
+    		setcookie('id_user', null, -1, '/');
     		$this->view->render($response, 'login/login.php');
-    	}
+    	}    	
+
 	}
 
 	public function upd_status($request, $response)
 	{
 		if(isset($_COOKIE['jwtcookie'])) {
 
-    		if( $this->decode_jwt($_COOKIE['jwtcookie']) == '1' ) {    
+			try {
+				$s = "update wp_post
+						set status = :status
+						where id_post = :id_post";
+				$s = $this->db->prepare($s);
+				$s->bindparam(":status",$this->param['upd_status']);
+				$s->bindparam(":id_post",$this->param['id_post']);
+				$s->execute();
 
-				try {
-					$s = "update wp_post
-							set status = :status
-							where id_post = :id_post";
-					$s = $this->db->prepare($s);
-					$s->bindparam(":status",$this->param['upd_status']);
-					$s->bindparam(":id_post",$this->param['id_post']);
-					$s->execute();
+				$log['event'] = "Update Status to " . $_POST['upd_status'];
+				$log['id_post'] = $_POST['id_post'];
+				$log['id_user'] = $_COOKIE['id_user'];
+				$this->addLog($log);
+				return '1';
 
-					$log['event'] = "Update Status to " . $_POST['upd_status'];
-					$log['id_post'] = $_POST['id_post'];
-					$log['id_user'] = $_COOKIE['id_user'];
-					$this->addLog($log);
-					return '1';
-
-		        } catch (PDOException $e) {
-		            return $this->jsonFail("Failed update status", array('error'=>$e->getMessage()));
-		        }
-
-	    	} else {
-	    		setcookie('jwtcookie', null, -1, '/');
-	    		setcookie('username', null, -1, '/');
-	    		setcookie('id_user', null, -1, '/');
-	    		$this->view->render($response, 'login/login.php');
-	    	}    	
+	        } catch (PDOException $e) {
+	            return $this->jsonFail("Failed update status", array('error'=>$e->getMessage()));
+	        }
 
     	} else {
-			$this->view->render($response, 'login/login.php');
-		}
+    		setcookie('jwtcookie', null, -1, '/');
+    		setcookie('username', null, -1, '/');
+    		setcookie('id_user', null, -1, '/');
+    		$this->view->render($response, 'login/login.php');
+    	}   
 	}
 }
